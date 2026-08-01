@@ -1,7 +1,7 @@
 # BUILDLOG — AI-usage log
 
 Honesty is graded, not perfection. This log records where AI helped, where it was
-wrong, and what I changed. Edit the entries below so they match how you actually built it.
+wrong, and what I changed.
 
 ---
 
@@ -18,11 +18,12 @@ wrong, and what I changed. Edit the entries below so they match how you actually
 
 ## Where AI was wrong / what I changed
 
-- [Fill in: a place where the AI-suggested code didn't compile or didn't behave as expected,
-  and what you changed. e.g. a wrong status code, a missing `await`, an ETag that didn't bust,
-  a test that passed for the wrong reason.]
-- [Fill in: a design suggestion you rejected and why — e.g. a global CORS policy you scoped down,
-  or a dependency you decided not to add.]
+- The honeypot first returned 400 when the hidden `website` field was filled. That tells a bot
+  the field is a trap, so it just stops filling it. I changed it to return a fake 201 and silently
+  drop the row instead — the bot sees success and never learns the honeypot exists.
+- The AI first suggested a global `AllowAnyOrigin()` CORS policy. I rejected it: that would let any
+  site call the authenticated dashboard routes too. I scoped a named `"public"` policy to only
+  `/config` and `/submissions`, and left the admin/dashboard routes with no CORS at all.
 
 ## What I verified myself
 
@@ -33,5 +34,4 @@ wrong, and what I changed. Edit the entries below so they match how you actually
 
 ## Cost & grounding (if AI used for content)
 
-- No paid AI is used in the core build. [If you used a free model for anything, note it here;
-  otherwise state that captions/content are not part of this capstone.]
+- No paid AI is used in the core build. Captions/content are not part of this capstone.
