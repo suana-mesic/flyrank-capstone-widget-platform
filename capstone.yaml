@@ -1,0 +1,34 @@
+# FlyRank capstone manifest — read by the automated evaluator.
+name: embeddable-widget-lead-capture-platform
+description: >
+  A multi-tenant lead-capture platform: owners define widgets and get an embed
+  snippet; visitor submissions arrive cross-origin, validated, rate-limited,
+  spam-filtered, geo-enriched via a provider fallback chain, and dashboarded.
+
+# One command to boot the system on a clean machine (Postgres in Docker, API via dotnet).
+run: docker compose up -d && dotnet run --project WidgetPlatform
+
+# Seed a demo tenant so the dashboard/demo has data (widgets are then created via POST /widgets).
+seed: 'curl -s -X POST http://localhost:5133/auth/register -H "Content-Type: application/json" -d "{\"email\":\"demo@widget.com\",\"password\":\"demo1234\"}"'
+
+# Runs the automated test suite (10 tests).
+test: dotnet test
+
+base_url: http://localhost:5133
+
+endpoints:
+  # Authenticated (JWT) — owner side
+  - POST /auth/register
+  - POST /auth/login
+  - GET /widgets
+  - POST /widgets
+  - GET /widgets/{id}
+  - PUT /widgets/{id}
+  - DELETE /widgets/{id}
+  - GET /widgets/{id}/embed
+  - GET /dashboard/submissions
+  - GET /dashboard/stats
+  # Public (CORS) — customer site + visitor
+  - GET /widget.js
+  - GET /widgets/{id}/config
+  - POST /submissions
